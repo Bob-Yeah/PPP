@@ -10,6 +10,7 @@ const char quit = 'q';
 const char print = ';';
 const string prompt = "> ";
 const string result = "= ";
+extern double MR; //calculator's memory
 class Token{
 public:
     char kind;

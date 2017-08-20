@@ -22,6 +22,10 @@ double expression(){
                 left -= term(); //evaluate Term and Sub
                 t = ts.get();
                 break;
+            case 'M':
+                t = ts.get();
+                MR = left;
+                return left;
             default: 
                 ts.putback(t);  //put t back into the token stream 
                 return left;
@@ -75,7 +79,10 @@ double primary(){
         {
             re = expression();
             t=ts.get();
-            if(t.kind!=')') error("')' expected");
+            if(t.kind!=')') {
+                ts.putback(t); 
+                error("')' expected");
+            }
             break;
         }
         case number: 
@@ -86,6 +93,9 @@ double primary(){
             break;
         case '+':
             re = 0 + primary();
+            break;
+        case 'R':
+            re = MR;
             break;
         default: 
             error("primary expected");
@@ -124,6 +134,7 @@ Token Token_stream::get(){
         case '(': case ')': 
         case '+': case '-': 
         case '*': case '/':case '%':case '!':
+        case 'M': 
             return Token(ch);
         case '.':
         case '0': case '1': case '2': case '3': case '4': 
@@ -133,6 +144,10 @@ Token Token_stream::get(){
             double val;
             cin >> val; //pls pay attention to the great advantage of cin
             return Token(number,val);
+        }
+        case 'R':{
+            return Token(number,MR);
+
         }
         default: 
             error("Bad token");

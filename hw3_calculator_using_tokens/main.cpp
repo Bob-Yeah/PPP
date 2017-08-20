@@ -38,17 +38,17 @@
 //global variables
 Token_stream ts;
 // vector <Variable> var_table;
-
+double MR = 0;
 void clean_up_mess() {
     ts.ignore(print);
 }
 void calculate(){
 
-    while(cin){
+    do{
         try{
             cout<<prompt;
             Token t=ts.get();
-            while (t.kind==print) t=ts.get();
+            while (t.kind==print) t=ts.get(); //eat ;
             if (t.kind==quit) return ;
             else ts.putback(t);
             cout << result << expression() << endl;
@@ -58,7 +58,7 @@ void calculate(){
             clean_up_mess();
         }
     
-    }
+    }while(cin);
     
     
 }
@@ -68,7 +68,7 @@ int main(int argc,char ** argv){
         return 0;
     }
     catch (exception &e){
-        cerr << e.what() << endl;
+        cerr << "out " << e.what() << endl;
         return 1;
     }
     catch (...){
