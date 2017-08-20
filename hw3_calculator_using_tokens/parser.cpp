@@ -5,6 +5,10 @@ void error (string s){
 void error (string s1,string s2){
     throw runtime_error(s1+s2);
 }
+int fac(int input){
+    if (input==0) return 1;
+    else return input*fac(input-1);
+}
 double expression(){
     double left = term();   //read and evaluate a term
     Token t = ts.get();     //get the next Token from the Token stream 
@@ -90,8 +94,8 @@ double primary(){
     t=ts.get();
     if (t.kind=='!') {
         int fac_temp = int(re);
-        if (fac_temp != re) error("no-interger factorial error");
-        else re = fac_temp!; 
+        if (fac_temp != re || fac_temp < 0 ) error("no-interger or negative-interger factorial error");
+        else re = fac(fac_temp); 
     }
     else ts.putback(t);
     return re;
@@ -119,7 +123,7 @@ Token Token_stream::get(){
         case quit:case print:
         case '(': case ')': 
         case '+': case '-': 
-        case '*': case '/':case '%':
+        case '*': case '/':case '%':case '!':
             return Token(ch);
         case '.':
         case '0': case '1': case '2': case '3': case '4': 
