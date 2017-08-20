@@ -1,19 +1,10 @@
-#include <iostream>
-#include <string>
 #include "parser.h"
-using namespace std;
 void error (string s){
     throw runtime_error(s);
 }
 void error (string s1,string s2){
     throw runtime_error(s1+s2);
 }
-
-
-double primary();
-double term();
-double expression();
-Token_stream ts;
 double expression(){
     double left = term();   //read and evaluate a term
     Token t = ts.get();     //get the next Token from the Token stream 
@@ -32,7 +23,6 @@ double expression(){
                 return left;
         }
     }
-    return 0.0;
 }
 
 double term(){
@@ -54,6 +44,18 @@ double term(){
                 t = ts.get();
                 break;
             }
+            case '%':
+            {
+                double d=primary();
+                int i1 = int(left);
+                if (i1!=left) error("left-hand operand of % not int");
+                int i2 = int(d);
+                if (i2!=d) error("right-hand operand of % not int");
+                if (i2==0) error("the operation %: divide by zero");
+                left = i1%i2;
+                t=ts.get();
+                break;
+            }
             default: 
                 ts.putback(t);  //put t back into the Token stream 
                 return left;
@@ -63,19 +65,36 @@ double term(){
 
 double primary(){
     Token t=ts.get();
+    double re;
     switch(t.kind){
         case '(': 
         {
-            double d = expression();
+            re = expression();
             t=ts.get();
             if(t.kind!=')') error("')' expected");
+            break;
         }
-        case '8': 
-            return t.value;
+        case number: 
+            re = t.value;
+            break;
+        case '-':
+            re = 0 - primary();
+            break;
+        case '+':
+            re = 0 + primary();
+            break;
         default: 
             error("primary expected");
 
     }
+    t=ts.get();
+    if (t.kind=='!') {
+        int fac_temp = int(re);
+        if (fac_temp != re) error("no-interger factorial error");
+        else re = fac_temp!; 
+    }
+    else ts.putback(t);
+    return re;
 }
 
 Token_stream::Token_stream()
@@ -97,22 +116,35 @@ Token Token_stream::get(){
     char ch;
     cin>>ch;
     switch(ch){
-        case ';' : //for 'print'
-
-        case 'q' : //for 'quit'
-
-        case '(': case ')': case '+': case '-': case '*': case '/':
+        case quit:case print:
+        case '(': case ')': 
+        case '+': case '-': 
+        case '*': case '/':case '%':
             return Token(ch);
         case '.':
-        case '0': case '1': case '2': case '3': case '4': case '5':
-        case '6': case '7': case '8': case '9':
+        case '0': case '1': case '2': case '3': case '4': 
+        case '5': case '6': case '7': case '8': case '9':
         {
             cin.putback(ch); //put digt back into the input Token_stream
             double val;
             cin >> val; //pls pay attention to the great advantage of cin
-            return Token('8',val);
+            return Token(number,val);
         }
         default: 
             error("Bad token");
     }
+}
+
+void Token_stream::ignore(char c){  //c represents the kind of Token
+    //first look in buffer:
+    if (full && c == buffer.kind){
+        full = false;
+        return;
+    }
+    full = false;
+
+    //now search input:
+    char ch = 0;
+    while (cin >> ch)
+        if (ch == c) return;
 }
