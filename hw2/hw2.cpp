@@ -1,9 +1,16 @@
 #include <string>
 #include <iostream>
 using namespace std;
+void mystery(string a, string &b){
+    a.erase(0,1);
+    b += a[0];
+    b.insert(3,"FOO");
+
+}
 int main(int argc,char ** argv){
-    string input_string;
-    cin>>input_string;
-    cout<<input_string;
+    string a = "Stanford";
+    string b = "Tree";
+    mystery(a,b);
+    cout<< a << " " << b <<endl;
     return 0;
 }
