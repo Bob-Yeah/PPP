@@ -1,0 +1,4 @@
+Parking Randomly
+[0,5)m can park 5 cars.
+if there is a place larger than 1m left, the newly arrived car can be parked.
+Q: average number of cars parked?
