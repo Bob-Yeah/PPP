@@ -1,3 +1,8 @@
+/*
+ *g++ -std=c++11 ShortestPath.cpp -o SP
+ *
+*/
+
 #include <iostream>
 #include <queue>
 #include <string>
@@ -106,8 +111,10 @@ void Dijkstra(Graph graph, int node1, int node2) {
 	while (!route[node2-1].empty()){
 		cout << route[node2-1].front();
 		route[node2-1].pop();
+		if (node1 == node2) cout<< " -> "<<node1;
 		if (route[node2-1].empty()) break;
 		cout << " -> ";
+		
 	}
 	cout << endl;
 }
